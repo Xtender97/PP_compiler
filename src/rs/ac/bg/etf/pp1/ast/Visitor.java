@@ -1,0 +1,111 @@
+// generated with ast extension for cup
+// version 0.8
+// 31/0/2020 19:32:27
+
+
+package rs.ac.bg.etf.pp1.ast;
+
+public interface Visitor { 
+
+    public void visit(Designator Designator);
+    public void visit(MethodDecl MethodDecl);
+    public void visit(Factor Factor);
+    public void visit(MulList MulList);
+    public void visit(DesignatorStatement DesignatorStatement);
+    public void visit(FormalParsList FormalParsList);
+    public void visit(MulOp MulOp);
+    public void visit(FormalDecl FormalDecl);
+    public void visit(AddList AddList);
+    public void visit(Expr Expr);
+    public void visit(Const Const);
+    public void visit(Decl Decl);
+    public void visit(CommaVarDecl CommaVarDecl);
+    public void visit(FormPars FormPars);
+    public void visit(VarDeclList VarDeclList);
+    public void visit(DeclarationList DeclarationList);
+    public void visit(ErrorExpr ErrorExpr);
+    public void visit(VarDecl VarDecl);
+    public void visit(ConstDeclList ConstDeclList);
+    public void visit(MethodDeclList MethodDeclList);
+    public void visit(Statement Statement);
+    public void visit(CommaConstDecl CommaConstDecl);
+    public void visit(AddOp AddOp);
+    public void visit(NewList NewList);
+    public void visit(ActPars ActPars);
+    public void visit(StatementList StatementList);
+    public void visit(ListOfVarDecl ListOfVarDecl);
+    public void visit(NoNewList NoNewList);
+    public void visit(NewListArray NewListArray);
+    public void visit(DesignatorFactorFuncCall DesignatorFactorFuncCall);
+    public void visit(DesignatorFactor DesignatorFactor);
+    public void visit(NewFactor NewFactor);
+    public void visit(ExprFactor ExprFactor);
+    public void visit(ConstFactor ConstFactor);
+    public void visit(NoMulList NoMulList);
+    public void visit(MultiplicationList MultiplicationList);
+    public void visit(Mod Mod);
+    public void visit(Div Div);
+    public void visit(Mul Mul);
+    public void visit(Minus Minus);
+    public void visit(Plus Plus);
+    public void visit(NoAddList NoAddList);
+    public void visit(AdditionList AdditionList);
+    public void visit(ActParsSingle ActParsSingle);
+    public void visit(ActParsLista ActParsLista);
+    public void visit(ErrorStmt ErrorStmt);
+    public void visit(ErrorExpression ErrorExpression);
+    public void visit(FuncCallStatementNoArg FuncCallStatementNoArg);
+    public void visit(FuncCallStatementWithArg FuncCallStatementWithArg);
+    public void visit(MinusDesignator MinusDesignator);
+    public void visit(PlusDesignator PlusDesignator);
+    public void visit(EqualDesignator EqualDesignator);
+    public void visit(NegExpr NegExpr);
+    public void visit(PosExpr PosExpr);
+    public void visit(Term Term);
+    public void visit(ArrayID ArrayID);
+    public void visit(ArrayDesignator ArrayDesignator);
+    public void visit(SimpleDesignator SimpleDesignator);
+    public void visit(PrintStatementTwoArg PrintStatementTwoArg);
+    public void visit(PrintStatementOneArg PrintStatementOneArg);
+    public void visit(ReadStatement ReadStatement);
+    public void visit(BasicStatement BasicStatement);
+    public void visit(NoStatementList NoStatementList);
+    public void visit(ListStatement ListStatement);
+    public void visit(NoFormPars NoFormPars);
+    public void visit(FormalPars FormalPars);
+    public void visit(SingleFormalParam SingleFormalParam);
+    public void visit(FormalParameterList FormalParameterList);
+    public void visit(FormalArrayDecl FormalArrayDecl);
+    public void visit(FormalVarDecl FormalVarDecl);
+    public void visit(SingleVarDeclarationsInMethod SingleVarDeclarationsInMethod);
+    public void visit(ListOfVarDeclarationsInMethod ListOfVarDeclarationsInMethod);
+    public void visit(MethodDeclNoVar MethodDeclNoVar);
+    public void visit(MethodDeclWithVar MethodDeclWithVar);
+    public void visit(NoMethodDeclaratio NoMethodDeclaratio);
+    public void visit(MethodDeclarationList MethodDeclarationList);
+    public void visit(MethodName MethodName);
+    public void visit(Type Type);
+    public void visit(CommaArrayVarDeclaration CommaArrayVarDeclaration);
+    public void visit(CommaVarDeclaration CommaVarDeclaration);
+    public void visit(ErrorInVarDecl ErrorInVarDecl);
+    public void visit(VarArrayDecl VarArrayDecl);
+    public void visit(VarDeclaration VarDeclaration);
+    public void visit(VarDeclSingle VarDeclSingle);
+    public void visit(VarDeclarationList VarDeclarationList);
+    public void visit(NullConst NullConst);
+    public void visit(FalseConst FalseConst);
+    public void visit(TrueConst TrueConst);
+    public void visit(CharConst CharConst);
+    public void visit(NumConst NumConst);
+    public void visit(CommaConstDeclaration CommaConstDeclaration);
+    public void visit(ConstDecl ConstDecl);
+    public void visit(ConstDeclSingle ConstDeclSingle);
+    public void visit(ConstDeclarationList ConstDeclarationList);
+    public void visit(DeclC DeclC);
+    public void visit(DeclV DeclV);
+    public void visit(NoDeclaration NoDeclaration);
+    public void visit(Declarations Declarations);
+    public void visit(ProgName ProgName);
+    public void visit(Program Program);
+
+}

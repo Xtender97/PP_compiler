@@ -1,0 +1,237 @@
+package rs.ac.bg.etf.pp1;
+
+import java_cup.runtime.*;
+import org.apache.log4j.*;
+import rs.ac.bg.etf.pp1.ast.*;
+
+parser code {:
+
+	boolean errorDetected = false;
+	
+	Logger log = Logger.getLogger(getClass());
+   
+   
+    // slede redefinisani metodi za prijavu gresaka radi izmene teksta poruke
+     
+    public void report_fatal_error(String message, Object info) throws java.lang.Exception {
+      done_parsing();
+      report_error(message, info);
+    }
+  
+    public void syntax_error(Symbol cur_token) {
+        report_error("\nSintaksna greska", cur_token);
+    }
+  
+    public void unrecovered_syntax_error(Symbol cur_token) throws java.lang.Exception {
+        report_fatal_error("Fatalna greska, parsiranje se ne moze nastaviti", cur_token);
+    }
+
+    public void report_error(String message, Object info) {
+    	errorDetected = true;
+    	StringBuilder msg = new StringBuilder(message); 
+    	if (info instanceof Symbol)
+            msg.append (" na liniji ").append(((Symbol)info).left);
+        log.error(msg.toString());
+    }
+
+
+:}
+
+scan with {:
+
+	Symbol s = this.getScanner().next_token();
+	if (s != null && s.value != null) 
+		log.info(s.toString() + " " + s.value.toString());
+	return s;
+
+
+:}
+
+
+
+terminal PROG, LBRACE, RBRACE, CONST, SEMI, COMMA;
+terminal LBRACKET, RBRACKET, EQUAL, VOID, LPAREN, RPAREN, READ, MINUSMINUS, PLUSPLUS;
+terminal PLUS, MINUS, MUL, DIV, MOD, NEW, PRINT, RETURN;
+terminal Integer DIGIT;
+terminal String IDENT, CHAR_CONST, TRUE, FALSE, NULL;
+
+
+nonterminal DeclarationList, MethodDeclList, VarDecl, ConstDecl;
+nonterminal Decl, ConstDeclList, VarDeclList, FormPars;
+nonterminal Statement;
+nonterminal CommaVarDecl, CommaConstDecl;
+nonterminal ListOfVarDecl, StatementList, FormalParsList, ActPars, FormalDecl;
+
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, Const, MethodName, MethodDecl, Designator, Expr, Factor, MulList, AddList, Term, DesignatorStatement, ErrorExpr,NewList, AddOp, MulOp, ArrayID;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
+
+Program ::= (Program) PROG ProgName:p DeclarationList LBRACE MethodDeclList RBRACE;
+
+ProgName ::= (ProgName) IDENT:progName;
+
+DeclarationList ::= (Declarations) DeclarationList Decl
+					|
+					(NoDeclaration) /* epsilon*/
+					;
+					
+Decl ::= (DeclV) VarDeclList SEMI
+		|
+		(DeclC) ConstDeclList SEMI
+		;
+
+ConstDeclList ::= (ConstDeclarationList) ConstDeclList CommaConstDecl
+				|
+				(ConstDeclSingle) ConstDecl
+				;
+				
+ConstDecl ::= (ConstDecl) CONST Type:constType IDENT:constId EQUAL Const;
+
+CommaConstDecl ::= (CommaConstDeclaration) COMMA IDENT:constId EQUAL Const;
+
+Const ::= (NumConst) DIGIT:constant
+			|
+			(CharConst) CHAR_CONST:constant
+			|
+			(TrueConst) TRUE:constant
+			|
+			(FalseConst) FALSE:constant
+			|
+			(NullConst) NULL:nullconst
+			;
+
+VarDeclList ::= (VarDeclarationList) VarDeclList CommaVarDecl
+				|
+				(VarDeclSingle) VarDecl
+				;
+				
+VarDecl ::= (VarDeclaration) Type:varType IDENT:varId 
+			| 
+			(VarArrayDecl) Type:varType IDENT:varId LBRACKET RBRACKET
+			|
+			(ErrorInVarDecl) error:k
+				{: parser.report_error("Izvrsen oporavak u liniji " + ((java_cup.runtime.Symbol)CUP$MJParser$stack.elementAt(CUP$MJParser$top)).left, null);  :}
+			;
+			
+CommaVarDecl ::= (CommaVarDeclaration) COMMA IDENT:varId
+				| (CommaArrayVarDeclaration) COMMA IDENT:varId LBRACKET RBRACKET
+				;
+				
+Type ::= (Type) IDENT:typeName;
+
+MethodName ::= (MethodName) VOID IDENT:methName;
+
+MethodDeclList ::= (MethodDeclarationList) MethodDeclList MethodDecl
+				|
+				(NoMethodDeclaratio) /* epsilon*/
+				;
+
+MethodDecl ::= (MethodDeclWithVar) MethodName LPAREN FormPars RPAREN ListOfVarDecl LBRACE StatementList RBRACE
+			|
+			(MethodDeclNoVar) MethodName LPAREN FormPars RPAREN LBRACE StatementList RBRACE
+			;
+			
+ListOfVarDecl ::= (ListOfVarDeclarationsInMethod) VarDeclList SEMI ListOfVarDecl
+				|(SingleVarDeclarationsInMethod) VarDeclList SEMI
+				;
+FormalDecl ::= (FormalVarDecl) Type:varType IDENT:varId
+			| 
+			(FormalArrayDecl) Type:varType IDENT:varId LBRACKET RBRACKET
+			;
+			
+FormalParsList ::= (FormalParameterList) FormalParsList COMMA FormalDecl
+				| (SingleFormalParam) FormalDecl
+				;
+
+FormPars ::= (FormalPars)FormalParsList
+			| (NoFormPars) /* epsilon */
+			;
+
+StatementList ::= (ListStatement) StatementList Statement
+				|
+				(NoStatementList) /* epsilon */
+				;
+
+Statement ::= (BasicStatement) DesignatorStatement
+			|
+			(ReadStatement) READ LPAREN Designator RPAREN SEMI
+			|
+			(PrintStatementOneArg) PRINT LPAREN Expr RPAREN SEMI
+			|
+			(PrintStatementTwoArg) PRINT LPAREN Expr COMMA DIGIT:broj RPAREN SEMI
+			;
+					
+Designator ::= (SimpleDesignator) IDENT:varId
+			| (ArrayDesignator) ArrayID LBRACKET Expr RBRACKET
+			;
+			
+ArrayID ::= (ArrayID) IDENT:arrayId;
+			
+Term  ::= (Term) Factor MulList;			
+			
+Expr ::= (PosExpr) Term AddList
+		|
+		(NegExpr) MINUS Term AddList
+		;
+
+DesignatorStatement ::= (EqualDesignator) Designator EQUAL ErrorExpr  
+						|
+						(PlusDesignator) Designator PLUSPLUS SEMI
+						|
+						(MinusDesignator) Designator MINUSMINUS SEMI
+						|
+						(FuncCallStatementWithArg) Designator LPAREN ActPars RPAREN SEMI
+						|
+						(FuncCallStatementNoArg) Designator LPAREN RPAREN SEMI
+						;
+
+ErrorExpr ::= (ErrorExpression) Expr SEMI
+			|
+			(ErrorStmt) error:k SEMI
+				{: parser.report_error("Izvrsen oporavak do ; u liniji " + kleft, null);  :}
+			;
+			
+
+ActPars ::= (ActParsLista)  ActPars COMMA Expr
+			|
+			(ActParsSingle) Expr
+			;
+
+AddList ::= (AdditionList) AddList AddOp Term
+			| 
+			(NoAddList)/*epsilon*/
+			;
+			
+AddOp ::= (Plus) PLUS
+		|
+		(Minus) MINUS
+		;
+		
+MulOp ::= (Mul) MUL
+		|
+		(Div) DIV
+		|
+		(Mod) MOD
+		;
+		
+
+
+MulList ::= (MultiplicationList) MulList MulOp Factor
+			|
+			(NoMulList) /* epsilon*/
+			;
+
+Factor ::= (ConstFactor) Const
+		|
+		(ExprFactor) LPAREN Expr RPAREN
+		|
+		(NewFactor) NEW NewList
+		|
+		(DesignatorFactor) Designator
+		|
+		(DesignatorFactorFuncCall) Designator LPAREN RPAREN
+		;
+		
+NewList ::= (NewListArray) Type LBRACKET Expr RBRACKET
+			|
+			(NoNewList) Type
+			;

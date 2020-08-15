@@ -1,0 +1,11 @@
+program MJProgram
+	const int a = true, b = true;
+	int x, h;
+	int y[];
+	
+	
+{
+	void main() {
+		x = x + 3;
+	}
+}
